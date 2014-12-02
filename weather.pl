@@ -30,8 +30,8 @@ my ($conditions, $high, $low, $humidity, $wind_speed) = (0,0,0,0,0);
 # get keys (testing)
 print "[testing]\n";
 my @keys = keys($forecast->{'forecast'}->{'simpleforecast'}->{'forecastday'});
-print "keys in \$forecast: " . "@keys\n";
-print "data in \$forecast->{'forecast'}->{'simpleforecast'}->{'forecastday'}: " . "$forecast->{'forecast'}->{'simpleforecast'}->{'forecastday'}" . "\n";
+print "keys in \$forecast->forecast->simpleforecast->forecastday: " . "@keys\n";
+print "data in \$forecast->forecast: " . %{$forecast->{'forecast'}->{'simpleforecast'}->{'forecastday'}} . "\n";
 print "\n";
 
 # print out data
