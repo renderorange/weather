@@ -20,18 +20,17 @@ my $alerts = decode_json execute_api_query('alerts');
 my $forecast = decode_json execute_api_query('forecast');
 
 # get specific data out of hashes
-my ($conditions, $high, $low, $humidity, $wind_speed) = (0,0,0,0,0);
-#my $conditions = $forecast{'forecast'}->{'simpleforecast'}->{'forecastday'}->{'conditions'};
-#my $high = $forecast{'forecast'}->{'simpleforecast'}->{'forecastday'}->{'high'}->{'fahrenheit'};
-#my $low = $forecast{'forecast'}->{'simpleforecast'}->{'forecastday'}->{'low'}->{'fahrenheit'};
-#my $humidity = $forecast{'forecast'}->{'simpleforecast'}->{'forecastday'}->{'avehumidity'};
-#my $wind_speed = $forecast{'forecast'}->{'simpleforecast'}->{'forecastday'}->{'avewind'}->{'mph'};
+my ($high, $low, $humidity, $wind_speed) = (0,0,0,0,0);
+my $conditions = $forecast->{'forecast'}->{'simpleforecast'}->{'forecastday'}->[0]{'conditions'};
+#my $high = $forecast{'forecast'}->{'simpleforecast'}->{'forecastday'}->[0]{'high'}->{'fahrenheit'};
+#my $low = $forecast{'forecast'}->{'simpleforecast'}->{'forecastday'}->[0]{'low'}->{'fahrenheit'};
+#my $humidity = $forecast{'forecast'}->{'simpleforecast'}->{'forecastday'}->[0]{'avehumidity'};
+#my $wind_speed = $forecast{'forecast'}->{'simpleforecast'}->{'forecastday'}->[0]{'avewind'}->{'mph'};
 
-# get keys (testing)
+# testing
 print "[testing]\n";
-my @keys = keys($forecast->{'forecast'}->{'simpleforecast'}->{'forecastday'});
-print "keys in \$forecast->forecast->simpleforecast->forecastday: " . "@keys\n";
-print "data in \$forecast->forecast: " . %{$forecast->{'forecast'}->{'simpleforecast'}->{'forecastday'}} . "\n";
+print "dumper output for \$forecast->forecast->simpleforecast->forecastday->[0]{high}->{'fahrenheit'}\n";
+print Dumper "$forecast->{'forecast'}->{'simpleforecast'}->{'forecastday'}->[0]{'high'}->{'fahrenheit'}";
 print "\n";
 
 # print out data
