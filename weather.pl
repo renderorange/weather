@@ -16,6 +16,7 @@ use JSON::XS;
 #     I want to be able to streamline as much as I can here.
 # investigate switching to weather.io
 #     nah, let's stick with the non-hipster option here
+# if you put this out on github, find a way to scrub your API string from the commits.
 
 # process commandline options
 my ($zip, $current, $forecast, $help);
