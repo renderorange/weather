@@ -8,18 +8,8 @@ use Getopt::Long;
 use LWP::Simple;
 use JSON::XS;
 
-# [TODO]
-# change geolookup to ip-api.com
-#     this api finds current zip and returns geodata, including city and state
-#     the point in switching, to speed up the multiple lookups to wunderground
-#     since they have multiple levels of lookups, including verification of API key
-#     I want to be able to streamline as much as I can here.
-# investigate switching to weather.io
-#     nah, let's stick with the non-hipster option here
-# if you put this out on github, find a way to scrub your API string from the commits.
-
 # process commandline options
-my ($zip, $current, $forecast, $help);
+my ($zip, $forecast, $help);
 GetOptions ( "z|zip=i" => \$zip,
              "f|forecast" => \$forecast,
              "h|help" => \$help );
@@ -37,8 +27,6 @@ my $geolocation_hash;
 if (! $zip) {  # if zip isn't set by the user, get the information from geolocation
     $geolocation_hash = decode_json get('http://ip-api.com/json');
     $zip = $geolocation_hash->{'zip'};
-#    $city = $geolocation_hash->{'city'};
-#    $state = $geolocation_hash->{'regionName'};
 }
 
 # get and set city and state
