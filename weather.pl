@@ -8,18 +8,22 @@ use Getopt::Long;
 use LWP::Simple;
 use JSON::XS;
 
+# [TODO]
+# change geolookup to ip-api.com
+#     this api finds current zip and returns geodata, including city and state
+#     the point in switching, to speed up the multiple lookups to wunderground
+#     since they have multiple levels of lookups, including verification of API key
+#     I want to be able to streamline as much as I can here.
+# investigate switching to weather.io
+#     nah, let's stick with the non-hipster option here
+
 # process commandline options
 my ($zip, $current, $forecast, $help);
 GetOptions ( "z|zip=i" => \$zip,
              "c|current" => \$current,
              "f|forecast" => \$forecast,
              "h|help" => \$help );
-if (! $zip || $help) { help(); }
-if ($current || $forecast) { 
-    eval 1;  # find more elegant way to do this
-} else {
-    help();
-}
+if ($help) { help(); }
 
 # wunderground api settings
 my $api_key = '';
@@ -28,10 +32,20 @@ if (! $api_key) {
     exit;
 }
 
-# get location data for zip
-my $locations_hash = decode_json get("http://api.wunderground.com/api/$api_key/geolookup/q/$zip.json");
-my $city = $locations_hash->{'location'}->{'city'};
-my $state = $locations_hash->{'location'}->{'state'};
+# get current zip
+my ($geolocation_hash, $city, $state);
+if (! $zip) {  # if zip isn't set by the user, get the information from geolocation
+    $geolocation_hash = decode_json get('http://ip-api.com/json');
+    $zip = $geolocation_hash->{'zip'};
+    $city = $geolocation_hash->{'city'};
+    $state = $geolocation_hash->{'state'};
+} else {
+    $geolocation_hash = decode_json get("http://ip-api.com/json?$zip");  # not sure of the format
+    $city = $geolocation_hash->{'city'};
+    $state = $geolocation_hash->{'state'};
+}
+print "$zip $city $state\n";
+exit;
 
 # query wunderground, decode, then store data
 my ($conditions_hash, $forecast_hash);
@@ -69,10 +83,8 @@ if ($forecast) {
 # subs
 sub help {
     die "usage: ./weather.pl -z 77429 -c -f\n\n" .
-          "required\n" .
+          "options (-c or -f must be used)\n" .
           "  -z|--zip\tpostal code of the location to check\n" .
-          "\n" .
-          "optional (either -c or -f must be passed)\n" .
           "  -c|--current\tdisplays current conditions\n" .
           "  -f|--forecast\tdisplays 4 day forecast\n" .
           "  -h|--help\tdisplays this dialogue\n" .
