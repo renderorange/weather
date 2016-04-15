@@ -39,14 +39,12 @@ if (! $zip) {  # if zip isn't set by the user, get the information from geolocat
     $geolocation_hash = decode_json get('http://ip-api.com/json');
     $zip = $geolocation_hash->{'zip'};
     $city = $geolocation_hash->{'city'};
-    $state = $geolocation_hash->{'state'};
+    $state = $geolocation_hash->{'regionName'};
 } else {
     $geolocation_hash = decode_json get("http://ip-api.com/json?$zip");  # not sure of the format
     $city = $geolocation_hash->{'city'};
-    $state = $geolocation_hash->{'state'};
+    $state = $geolocation_hash->{'regionName'};
 }
-print "$zip $city $state\n";
-exit;
 
 # query wunderground, decode, then store data
 my ($conditions_hash, $forecast_hash);
