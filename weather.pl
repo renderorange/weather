@@ -60,15 +60,15 @@ if ($forecast) { $forecast_hash = decode_json execute_api_query('http://api.wund
 
 # output
 print "weather for $city, $state\n\n" .
-      "currently:  $conditions_hash->{'current_observation'}->{'weather'}\n" .
-      "temp:  $conditions_hash->{'current_observation'}->{'temperature_string'}\n" .
-      "humidity:  $conditions_hash->{'current_observation'}->{'relative_humidity'}\n" .
-      "precip:  $conditions_hash->{'current_observation'}->{'precip_today_string'}\n" .
-      "wind:  $conditions_hash->{'current_observation'}->{'wind_string'}\n" .
-      "visibility:  $conditions_hash->{'current_observation'}->{'visibility_mi'} miles\n" .
+      "currently:\t$conditions_hash->{'current_observation'}->{'weather'}\n" .
+      "temp:\t\t$conditions_hash->{'current_observation'}->{'temperature_string'}\n" .
+      "humidity:\t$conditions_hash->{'current_observation'}->{'relative_humidity'}\n" .
+      "precip:\t\t$conditions_hash->{'current_observation'}->{'precip_today_string'}\n" .
+      "wind:\t\t$conditions_hash->{'current_observation'}->{'wind_string'}\n" .
+      "visibility:\t$conditions_hash->{'current_observation'}->{'visibility_mi'} miles\n" .
       "\n";
 if ($forecast) { 
-    print "4 day forecast\n" .
+    print "4 day forecast\n\n" .
           "$forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[0]{'title'}\n" .
           "    AM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[0]{'fcttext'}\n" .
           "    PM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[1]{'fcttext'}\n" .
