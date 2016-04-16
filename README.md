@@ -35,7 +35,7 @@ usage: ./weather.pl -z 77429 -f
 
 options:
 	--zip		specify where you want weather results for
-			without --zip, weather.pl performs a geolookup to find where you are
+				without --zip, weather.pl performs a geolookup to find where you are
 
 	--forecast	additionally displays the next 4 day forecast
 
