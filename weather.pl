@@ -23,8 +23,9 @@ if ($help) { help(); }
 
 # make sure the rc file is there
 if (! -e '.weather.rc') {
-    die ".weather.rc is not present\n" .
-        "please see github.com/renderorange/weather for setup details\n\n";
+    print ".weather.rc is not present\n" .
+          "please see github.com/renderorange/weather for setup details\n\n";
+    exit 1;
 }
 
 # load and verify config
@@ -37,8 +38,9 @@ foreach (read_lines('.weather.rc')) {
     $value =~ s/^\s+|\s+$//g;  # I tried to use map on the split list above, but it didn't like modifying $_
     # verify config contains what's expected
     if ($key !~ /^api_key$/ || $value !~ /^\w+$/) {
-        die ".weather.rc doesn't appear to contain what's needed\n" .
-            "please see github.com/renderorange/weather for setup details\n\n";
+        print ".weather.rc doesn't appear to contain what's needed\n" .
+              "please see github.com/renderorange/weather for setup details\n\n";
+        exit 1;
     }
     $config{$key} = $value;  # $config{'api_key'} = wunderground key is accessed like so
 }
@@ -88,12 +90,13 @@ if ($forecast) {
 
 # subs
 sub help {
-    die "usage: ./weather.pl -z 77429 -f\n\n" .
+    print "usage: ./weather.pl -z 77429 -f\n\n" .
           "options:\n" .
           "\t--zip\t\tspecify where you want weather results for\n" .
           "\t\t\twithout --zip, weather.pl performs a geolookup to find where you are\n\n" .
           "\t--forecast\tadditionally displays the next 4 day forecast\n\n" .
           "\t--help\t\tdisplays this dialogue\n\n";
+    exit 1;
 }
 
 sub execute_api_query {
@@ -106,10 +109,12 @@ sub execute_api_query {
     }
     my $res = get($uri);
     if (! $res) {
-        die "the api query to $url returned null\n";
+        print "the api query to $url returned null\n";
+        exit 1;
     } elsif ($res =~ /keynotfound/) {
-        die "the wunderground key in your .weather.rc doesn't exist at wunderground.\n" .
-            "please see github.com/renderorange/weather for setup details\n\n";
+        print "the wunderground key in your .weather.rc doesn't exist at wunderground.\n" .
+              "please see github.com/renderorange/weather for setup details\n\n";
+        exit 1;
     } else {
         return $res;
     }
