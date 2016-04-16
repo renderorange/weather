@@ -49,54 +49,64 @@ run without any options, weather.pl will do a geolookup to [http://ip-api.com/js
 if you're running through a proxy, the geolocation API call won't be accurate.
 ```
 $ perl weather.pl 
+
 weather for Houston, TX
 
-currently:  Clear
-temp:  68.8 F (20.4 C)
-humidity:  88%
+currently:  Mostly Cloudy
+temp:  77.0 F (25.0 C)
+humidity:  81%
 precip:  0.00 in (0 mm)
-wind:  Calm
+wind:  From the WNW at 2.0 MPH Gusting to 11.0 MPH
 visibility:  10.0 miles
+
 ```
 
 you can also specify where you want to check weather, using the --zip, or -z
 ```
 $ perl weather.pl -z 37421
+
 weather for Chattanooga, TN
 
 currently:  Partly Cloudy
-temp:  59.7 F (15.4 C)
-humidity:  52%
+temp:  69.8 F (21.0 C)
+humidity:  32%
 precip:  0.00 in (0 mm)
 wind:  Calm
 visibility:  10.0 miles
+
 ```
 
 if you would like a 4 day forecast, you can also specify --forecast, or -f
 ```
 $ perl weather.pl -z 28734 -f
+
 weather for Franklin, NC
 
 currently:  Clear
-temp:  44.4 F (6.9 C)
-humidity:  68%
+temp:  61.1 F (16.2 C)
+humidity:  47%
 precip:  0.00 in (0 mm)
 wind:  Calm
 visibility:  10.0 miles
 
 4 day forecast
+
 Saturday
-    AM: Sunny. High 71F. Winds E at 5 to 10 mph.
-    PM: A mostly clear sky. Low 38F. Winds light and variable.
+AM:  Sunny. High 73F. Winds light and variable.
+PM:  A clear sky. Low 37F. Winds light and variable.
+
 Sunday
-    AM: A mainly sunny sky. High 76F. Winds light and variable.
-    PM: Clear. Low near 40F. Winds light and variable.
+AM:  Mainly sunny. High 77F. Winds light and variable.
+PM:  A mostly clear sky. Low near 40F. Winds light and variable.
+
 Monday
-    AM: Mainly sunny. High 81F. Winds light and variable.
-    PM: Mainly clear skies. Low 46F. Winds light and variable.
+AM:  Mostly sunny skies. High 81F. Winds light and variable.
+PM:  A few clouds. Low 46F. Winds light and variable.
+
 Tuesday
-    AM: Partly cloudy skies during the morning hours will become overcast in the afternoon. High 79F. Winds light and variable.
-    PM: Partly cloudy skies. Low 48F. Winds light and variable.
+AM:  A mix of clouds and sun in the morning followed by cloudy skies during the afternoon. High around 80F. Winds light and variable.
+PM:  Partly cloudy. Low near 50F. Winds light and variable.
+
 ```
 
 ## uncopyright
