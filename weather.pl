@@ -1,10 +1,14 @@
 #!/usr/bin/env perl
 
 # weather.pl
+# github.com/renderorange/weather
 
 use strict;
 use warnings;
+
+use local::lib;
 use Getopt::Long;
+use File::Slurper 'read_lines';
 use LWP::Simple;
 use JSON::XS;
 
@@ -15,11 +19,26 @@ GetOptions ( "z|zip=i" => \$zip,
              "h|help" => \$help );
 if ($help) { help(); }
 
-# wunderground api settings
-my $api_key = '';
-if (! $api_key) {
-    print "api key not set\n";
-    exit;
+# look for and read rc file
+if (! -e '.weather.rc') {
+    die ".weather.rc is not present\n" .
+        "please see github.com/renderorange/weather for setup details\n\n";
+}
+
+# load and verify config
+my %config;
+foreach (read_lines('.weather.rc')) {
+    if (/^#|^ /) { next; }  # filter out comments and blank lines
+    my ($key, $value) = split (/:/);  # store key and value pairs
+    # trim whitespace
+    $key =~ s/^\s+|\s+$//g;    # [TODO] this here isn't very elegant
+    $value =~ s/^\s+|\s+$//g;  # I tried to use map on the split list above, but it didn't like modifying $_
+    # verify config contains what's expected
+    if ($key !~ /^api_key$/ || $value !~ /^\w+$/) {
+        die ".weather.rc doesn't appear to contain what's needed\n" .
+            "please see github.com/renderorange/weather for setup details\n\n";
+    }
+    $config{$key} = $value;  # $config{'api_key'} = wunderground key is accessed like so
 }
 
 # get current zip
@@ -30,7 +49,7 @@ if (! $zip) {  # if zip isn't set by the user, get the information from geolocat
 }
 
 # get and set city and state
-my $location_hash = decode_json get("http://api.wunderground.com/api/$api_key/geolookup/q/$zip.json");
+my $location_hash = decode_json get("http://api.wunderground.com/api/$config{'api_key'}/geolookup/q/$zip.json");
 my $city = $location_hash->{'location'}->{'city'};
 my $state = $location_hash->{'location'}->{'state'};
 
@@ -64,6 +83,7 @@ if ($forecast) {
           "    PM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[7]{'fcttext'}\n" .
           "\n";
 }
+print "\n";
 
 # subs
 sub help {
@@ -75,9 +95,9 @@ sub help {
           "\t--help\t\tdisplays this dialogue\n\n";
 }
 
-sub execute_wunderground_query {
+sub execute_wunderground_query {  # [TODO] update this to run all API queries
     my $function = $_[0];
-    my $uri = "http://api.wunderground.com/api/$api_key/$function/q/$state/$city.json";
+    my $uri = "http://api.wunderground.com/api/$config{'api_key'}/$function/q/$state/$city.json";
     my $results = get($uri);
     if (! $results) {
         die "api query returned null\n";
