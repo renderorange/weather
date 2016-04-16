@@ -40,6 +40,7 @@ options:
 	--forecast	additionally displays the next 4 day forecast
 
 	--help		displays this dialogue
+
 ```
 
 weather.pl only has two options other than the help dialogue.
