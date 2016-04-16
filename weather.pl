@@ -11,6 +11,8 @@ use Getopt::Long;
 use File::Slurper 'read_lines';
 use LWP::Simple;
 use JSON::XS;
+use Term::ANSIColor qw(:constants);
+$Term::ANSIColor::AUTORESET = 1;
 
 # process commandline options
 my ($zip, $forecast, $help);
@@ -59,8 +61,8 @@ $conditions_hash = decode_json execute_api_query('http://api.wunderground.com/ap
 if ($forecast) { $forecast_hash = decode_json execute_api_query('http://api.wunderground.com/api/', $config{'api_key'}, 'forecast', "q/$state/$city.json") }
 
 # output
-print "weather for $city, $state\n\n" .
-      "currently:  $conditions_hash->{'current_observation'}->{'weather'}\n" .
+print BOLD "\nweather for $city, $state\n\n";
+print "currently:  $conditions_hash->{'current_observation'}->{'weather'}\n" .
       "temp:  $conditions_hash->{'current_observation'}->{'temperature_string'}\n" .
       "humidity:  $conditions_hash->{'current_observation'}->{'relative_humidity'}\n" .
       "precip:  $conditions_hash->{'current_observation'}->{'precip_today_string'}\n" .
@@ -68,19 +70,19 @@ print "weather for $city, $state\n\n" .
       "visibility:  $conditions_hash->{'current_observation'}->{'visibility_mi'} miles\n" .
       "\n";
 if ($forecast) { 
-    print "4 day forecast\n" .
-          "$forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[0]{'title'}\n" .
-          "    AM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[0]{'fcttext'}\n" .
-          "    PM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[1]{'fcttext'}\n" .
+    print BOLD "4 day forecast\n\n";
+    print "$forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[0]{'title'}\n" .
+          "AM:  $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[0]{'fcttext'}\n" .
+          "PM:  $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[1]{'fcttext'}\n\n" .
           "$forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[2]{'title'}\n" .
-          "    AM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[2]{'fcttext'}\n" .
-          "    PM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[3]{'fcttext'}\n" .
+          "AM:  $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[2]{'fcttext'}\n" .
+          "PM:  $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[3]{'fcttext'}\n\n" .
           "$forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[4]{'title'}\n" .
-          "    AM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[4]{'fcttext'}\n" .
-          "    PM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[5]{'fcttext'}\n" .
+          "AM:  $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[4]{'fcttext'}\n" .
+          "PM:  $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[5]{'fcttext'}\n\n" .
           "$forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[6]{'title'}\n" .
-          "    AM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[6]{'fcttext'}\n" .
-          "    PM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[7]{'fcttext'}\n" .
+          "AM:  $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[6]{'fcttext'}\n" .
+          "PM:  $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[7]{'fcttext'}\n" .
           "\n";
 }
 
