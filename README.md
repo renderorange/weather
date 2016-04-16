@@ -6,7 +6,9 @@ weather.pl is a script to get current conditions and 4 day forecast from wunderg
 
 ## setup
 to run weather.pl, you'll need to first get a wunderground API key, from here: [https://www.wunderground.com/weather/api][wunderground]
+
 then, to use the key, weather.pl expects a file named .weather.rc present in the same directory it resides.
+
 like this...
 ```
 ~/scripts/weather $ ls -1a
@@ -15,6 +17,7 @@ weather.pl
 ```
 
 inside the .weather.rc file, weather.pl expects a key value pair, separated by colon, containing your wunderground api key.
+
 like so...
 ```
 $ cat .weather.rc 
@@ -22,6 +25,7 @@ $ cat .weather.rc
 api_key:1a2s3d4f5g6h7j8k
 ```
 warning, not a real key ^
+
 weather.pl is a little forgiving with formatting of the rc file, but will let you know if something isn't right.
 
 ## usage
@@ -39,7 +43,9 @@ options:
 ```
 
 weather.pl only has two options other than the help dialogue.
+
 run without any options, weather.pl will do a geolookup to [http://ip-api.com/json][ipapi] to match your outbound IP to related zip code.
+
 if you're running through a proxy, the geolocation API call won't be accurate.
 ```
 $ perl weather.pl 
@@ -95,9 +101,13 @@ Tuesday
 
 ## uncopyright
 this script is specifically [uncopyrighted][uncopyright].
+
 No permission is needed to copy, distribute, or modify any part. Credit isn't required.
+
 Do what feels right, but don’t do it out of obligation.
+
 Yeah, it's kind of hipster.  Fight the power, and all that.
+
 I'll probably change it again something soon, but it's late and I need to go home and go to sleep.
 
 [wunderground]: https://www.wunderground.com/weather/api
