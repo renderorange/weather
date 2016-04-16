@@ -28,7 +28,7 @@ if (! -e '.weather.rc') {
 # load and verify config
 my %config;
 foreach (read_lines('.weather.rc')) {
-    if (/^#|^ /) { next; }  # filter out comments and blank lines
+    if (/^#/) { next; }  # filter out comments  # [TODO] filter out blank lines
     my ($key, $value) = split (/:/);  # store key and value pairs
     # trim whitespace
     $key =~ s/^\s+|\s+$//g;    # [TODO] this here isn't very elegant
@@ -49,14 +49,14 @@ if (! $zip) {  # if zip isn't set by the user, get the information from geolocat
 }
 
 # get and set city and state
-my $location_hash = decode_json get("http://api.wunderground.com/api/$config{'api_key'}/geolookup/q/$zip.json");
+my $location_hash = decode_json execute_api_query('http://api.wunderground.com/api', $config{'api_key'}, 'geolookup', "q/$zip.json");
 my $city = $location_hash->{'location'}->{'city'};
 my $state = $location_hash->{'location'}->{'state'};
 
 # query wunderground, decode, then store data
 my ($conditions_hash, $forecast_hash);
-$conditions_hash = decode_json execute_wunderground_query('conditions');
-if ($forecast) { $forecast_hash = decode_json execute_wunderground_query('forecast'); }
+$conditions_hash = decode_json execute_api_query('http://api.wunderground.com/api', $config{'api_key'}, 'conditions', "q/$state/$city.json");
+if ($forecast) { $forecast_hash = decode_json execute_api_query('http://api.wunderground.com/api/', $config{'api_key'}, 'forecast', "q/$state/$city.json") }
 
 # output
 print "weather for $city, $state\n\n" .
@@ -95,13 +95,21 @@ sub help {
           "\t--help\t\tdisplays this dialogue\n\n";
 }
 
-sub execute_wunderground_query {  # [TODO] update this to run all API queries
-    my $function = $_[0];
-    my $uri = "http://api.wunderground.com/api/$config{'api_key'}/$function/q/$state/$city.json";
-    my $results = get($uri);
-    if (! $results) {
-        die "api query returned null\n";
-    } else { 
-        return $results;
+sub execute_api_query {  # [TODO] update this to run all API queries
+    my ($url, $key, $function, $query) = @_;
+    my $uri;
+    if (scalar(@_ == 1)) {  # for now, the only API we're consuming other than wunderground doesn't require auth
+        $uri = $url;        # so, keep it simple and just run the url
+    } else {
+        $uri = "$url" . '/' . "$key" . '/' . "$function" . '/' . "$query";
+    }
+    my $res = get($uri);
+    if (! $res) {
+        die "the api query to $url returned null\n";
+    } elsif ($res =~ /keynotfound/) {
+        die "the wunderground key in your .weather.rc doesn't exist at wunderground.\n" .
+            "please see github.com/renderorange/weather for setup details\n\n";
+    } else {
+        return $res;
     }
 }
