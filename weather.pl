@@ -97,7 +97,7 @@ sub help {
 sub execute_api_query {
     my ($url, $key, $function, $query) = @_;
     my $uri;
-    if (scalar(@_ == 1)) {  # for now, the only API we're consuming other than wunderground doesn't require auth
+    if (scalar(@_) == 1) {  # for now, the only API we're consuming other than wunderground doesn't require auth
         $uri = $url;        # so, keep it simple and just run the url
     } else {                # otherwise assume it's going to be wunderground 
         $uri = "$url" . '/' . "$key" . '/' . "$function" . '/' . "$query";
