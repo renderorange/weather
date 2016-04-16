@@ -1,15 +1,19 @@
 # weather
+
 get cha some weather from wunderground
 
 ## description
+
 weather.pl is a script to get current conditions and 4 day forecast from wunderground's API.
 
 ## setup
+
 to run weather.pl, you'll need to first get a wunderground API key, from here: [https://www.wunderground.com/weather/api][wunderground]
 
 then, to use the key, weather.pl expects a file named .weather.rc present in the same directory it resides.
 
 like this...
+
 ```
 ~/scripts/weather $ ls -1a
 weather.pl
@@ -19,16 +23,19 @@ weather.pl
 inside the .weather.rc file, weather.pl expects a key value pair, separated by colon, containing your wunderground api key.
 
 like so...
+
 ```
 $ cat .weather.rc 
 # weather.pl settings
 api_key:1a2s3d4f5g6h7j8k
 ```
+
 warning, not a real key ^
 
 weather.pl is a little forgiving with formatting of the rc file, but will let you know if something isn't right.
 
 ## usage
+
 ```
 $ perl weather.pl -h
 usage: ./weather.pl -z 77429 -f
@@ -48,6 +55,7 @@ weather.pl only has two options other than the help dialogue.
 run without any options, weather.pl will do a geolookup to [http://ip-api.com/json][ipapi] to match your outbound IP to related zip code.
 
 if you're running through a proxy, the geolocation API call won't be accurate.
+
 ```
 $ perl weather.pl 
 
@@ -63,6 +71,7 @@ visibility:  10.0 miles
 ```
 
 you can also specify where you want to check weather, using the --zip, or -z
+
 ```
 $ perl weather.pl -z 37421
 
@@ -78,6 +87,7 @@ visibility:  10.0 miles
 ```
 
 if you would like a 4 day forecast, you can also specify --forecast, or -f
+
 ```
 $ perl weather.pl -z 28734 -f
 
@@ -110,17 +120,33 @@ PM:  Partly cloudy. Low near 50F. Winds light and variable.
 
 ```
 
-## uncopyright
-this script is specifically [uncopyrighted][uncopyright].
+## unlicense
 
-No permission is needed to copy, distribute, or modify any part. Credit isn't required.
+This is free and unencumbered software released into the public domain.
 
-Do what feels right, but don’t do it out of obligation.
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
 
-Yeah, it's kind of hipster.  Fight the power, and all that.
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
 
-I'll probably change it again something soon, but it's late and I need to go home and go to sleep.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org>
 
 [wunderground]: https://www.wunderground.com/weather/api
 [ipapi]: http://ip-api.com/json
-[uncopyright]: http://zenhabits.net/uncopyright
+[unlicense]: http://unlicense.org
