@@ -95,7 +95,7 @@ sub help {
           "\t--help\t\tdisplays this dialogue\n\n";
 }
 
-sub execute_api_query {  # [TODO] update this to run all API queries
+sub execute_api_query {
     my ($url, $key, $function, $query) = @_;
     my $uri;
     if (scalar(@_ == 1)) {  # for now, the only API we're consuming other than wunderground doesn't require auth
