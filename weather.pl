@@ -19,7 +19,7 @@ GetOptions ( "z|zip=i" => \$zip,
              "h|help" => \$help );
 if ($help) { help(); }
 
-# look for and read rc file
+# make sure the rc file is there
 if (! -e '.weather.rc') {
     die ".weather.rc is not present\n" .
         "please see github.com/renderorange/weather for setup details\n\n";
