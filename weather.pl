@@ -44,7 +44,7 @@ foreach (read_lines('.weather.rc')) {
 # get current zip
 my $geolocation_hash;
 if (! $zip) {  # if zip isn't set by the user, get the information from geolocation
-    $geolocation_hash = decode_json get('http://ip-api.com/json');
+    $geolocation_hash = decode_json execute_api_query('http://ip-api.com/json');
     $zip = $geolocation_hash->{'zip'};
 }
 
@@ -83,7 +83,6 @@ if ($forecast) {
           "    PM: $forecast_hash->{'forecast'}->{'txt_forecast'}->{'forecastday'}->[7]{'fcttext'}\n" .
           "\n";
 }
-print "\n";
 
 # subs
 sub help {
