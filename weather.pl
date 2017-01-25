@@ -10,7 +10,7 @@ use local::lib;
 use Getopt::Long;
 use File::Slurper 'read_lines';
 use LWP::Simple;
-use JSON::XS;
+use Cpanel::JSON::XS;
 use Term::ANSIColor qw(:constants);
 $Term::ANSIColor::AUTORESET = 1;
 
