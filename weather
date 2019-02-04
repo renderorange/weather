@@ -3,8 +3,10 @@
 use strict;
 use warnings;
 
-use Getopt::Long ();
-use Pod::Usage   ();
+use Getopt::Long  ();
+use Pod::Usage    ();
+use File::HomeDir ();
+use Config::Tiny  ();
 
 my $VERSION = '2.00';
 
@@ -27,7 +29,14 @@ if ( $opt->{version} ) {
     exit 0;
 }
 
-Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 ) if ( !$opt->{current} || !$opt->{forecast} );
+Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 ) unless ( $opt->{current} || $opt->{forecast} );
+
+my $home      = File::HomeDir->my_home;
+my $file      = '.weatherrc';
+my $file_path = "$home/$file";
+
+die( "$file_path does not exist\n" ) unless -e $file_path;
+my $config = Config::Tiny->read( $file_path );
 
 __END__
 
@@ -83,6 +92,10 @@ This program will retrieve weather condition and forecast details for your locat
 =item Getopt::Long
 
 =item Pod::Usage
+
+=item File::HomeDir
+
+=item Config::Tiny
 
 =back
 
