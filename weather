@@ -20,6 +20,7 @@ Getopt::Long::GetOptions(
     "version"  => \$opt->{version},
     "help"     => \$opt->{help},
     "man"      => \$opt->{man},
+    "devel"    => \$opt->{devel},
 ) or Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 );
 
 Pod::Usage::pod2usage( -exitval => 0, -verbose => 1 ) if $opt->{help};
@@ -39,9 +40,10 @@ my $file_path = "$home/$file";
 die( "$file_path does not exist\n" ) unless -e $file_path;
 my $config = Config::Tiny->read( $file_path );
 
-die( "the production key for openweathermap is not present in $file_path\n" )
-    unless exists $config->{openweathermap}->{production}
-        && $config->{openweathermap}->{production} =~ /^\w+$/;
+my $tier = $opt->{devel} ? 'development' : 'production';
+die( "the $tier key for openweathermap is not present in $file_path\n" )
+    unless exists $config->{openweathermap}->{$tier}
+        && $config->{openweathermap}->{$tier} =~ /^\w+$/;
 
 my $http_tiny = HTTP::Tiny->new();
 
@@ -80,6 +82,7 @@ weather - cli program to get the weather for your location
   weather [--current] [--forecast]
           [--version]
           [--help] [--man]
+          [--devel]
 
 =head1 DESCRIPTION
 
@@ -92,6 +95,7 @@ This program will retrieve weather condition and forecast details for your locat
   --version     print the version and exit
   --help        print this dialogue
   --man         display the full documentation
+  --devel       use a development tier key for openweathermap
 
 =head1 EXAMPLES
 
@@ -110,6 +114,21 @@ This program will retrieve weather condition and forecast details for your locat
   weather --forecast
 
 =back
+
+=head1 CONFIGURATION
+
+The configuration file for weather is location in the homedir of the running user, named .weatherrc
+
+The file may contain two sections, production and development, under the parent section, openweathermap
+
+  ~ $ cat .weatherrc
+  [openweathermap]
+  production = 1q2w3e4r5t6y7u8i9o0p1q2w3e4r5t6y
+  development = 0p9o8i7u6y5t4r3e2w1q0p9o8i7u6y5t
+
+The development section is required in the case of using the --devel switch for weather.
+
+The production section is required in normal operation.
 
 =head1 DEPENDENCIES
 
