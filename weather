@@ -117,7 +117,7 @@ This program will retrieve weather condition and forecast details for your locat
 
 =head1 CONFIGURATION
 
-The configuration file for weather is location in the homedir of the running user, named .weatherrc
+The configuration file for weather is located in the homedir of the running user, named .weatherrc
 
 The file may contain two sections, production and development, under the parent section, openweathermap
 
