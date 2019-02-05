@@ -15,7 +15,6 @@ my $VERSION = '2.00';
 my $opt = {};
 
 Getopt::Long::GetOptions(
-    "zip=i"    => \$opt->{zip},
     "current"  => \$opt->{current},
     "forecast" => \$opt->{forecast},
     "version"  => \$opt->{version},
@@ -46,17 +45,26 @@ die( "the production key for openweathermap is not present in $file_path\n" )
 
 my $http_tiny = HTTP::Tiny->new();
 
-unless ( $opt->{zip} ) {
-    my $geolocation_api = 'http://ip-api.com/json';
-    my $res = $http_tiny->get( $geolocation_api );
+my $geolocation_api = 'http://ip-api.com/json';
+my $res = $http_tiny->get( $geolocation_api );
 
-    if ( $res->{success} ) {
-        my $content = JSON::MaybeXS::decode_json( $res->{content} );
-        $opt->{zip} = $content->{zip};
-    }
-    else {
-        die( "the query to $geolocation_api wasn't successful\n" );
-    }
+my $location = {};
+
+if ( $res->{success} ) {
+    my $content = JSON::MaybeXS::decode_json( $res->{content} );
+
+    # TODO: this should be a little cleaner
+    # to request only the fields we want
+    $location->{zip}      = $content->{zip};
+    $location->{city}     = $content->{city};
+    $location->{state}    = $content->{regionName};
+    $location->{country}  = $content->{country};
+    $location->{timezone} = $content->{timezone};
+    $location->{lon}      = $content->{lon};
+    $location->{lat}      = $content->{lat};
+}
+else {
+    die( "the query to $geolocation_api wasn't successful\n" );
 }
 
 __END__
@@ -69,8 +77,7 @@ weather - cli program to get the weather for your location
 
 =head1 SYNOPSIS
 
-  weather [--zip] <int>
-          [--current] [--forecast]
+  weather [--current] [--forecast]
           [--version]
           [--help] [--man]
 
@@ -80,8 +87,6 @@ This program will retrieve weather condition and forecast details for your locat
 
 =head1 OPTIONS
 
-  --zip         specify where you want weather results for
-                geolocation lookup will be performed without zip
   --current     print the current conditions
   --forecast    print the next 4 day forecast
   --version     print the version and exit
@@ -92,15 +97,15 @@ This program will retrieve weather condition and forecast details for your locat
 
 =over
 
-=item get the current conditions for a specified zip code
+=item get the current conditions
 
-  weather --zip 77095 --current
+  weather --current
 
 =item get the current conditions and 4 day forecast
 
-  weather --zip 77095 --current --forecast
+  weather --current --forecast
 
-=item get the 4 day forecast only, via geolocation
+=item get the 4 day forecast only
 
   weather --forecast
 
