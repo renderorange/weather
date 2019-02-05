@@ -7,6 +7,8 @@ use Getopt::Long  ();
 use Pod::Usage    ();
 use File::HomeDir ();
 use Config::Tiny  ();
+use HTTP::Tiny    ();
+use JSON::MaybeXS ();
 
 my $VERSION = '2.00';
 
@@ -37,6 +39,25 @@ my $file_path = "$home/$file";
 
 die( "$file_path does not exist\n" ) unless -e $file_path;
 my $config = Config::Tiny->read( $file_path );
+
+die( "the production key for openweathermap is not present in $file_path\n" )
+    unless exists $config->{openweathermap}->{production}
+        && $config->{openweathermap}->{production} =~ /^\w+$/;
+
+my $http_tiny = HTTP::Tiny->new();
+
+unless ( $opt->{zip} ) {
+    my $geolocation_api = 'http://ip-api.com/json';
+    my $res = $http_tiny->get( $geolocation_api );
+
+    if ( $res->{success} ) {
+        my $content = JSON::MaybeXS::decode_json( $res->{content} );
+        $opt->{zip} = $content->{zip};
+    }
+    else {
+        die( "the query to $geolocation_api wasn't successful\n" );
+    }
+}
 
 __END__
 
@@ -96,6 +117,10 @@ This program will retrieve weather condition and forecast details for your locat
 =item File::HomeDir
 
 =item Config::Tiny
+
+=item HTTP::Tiny
+
+=item JSON::MaybeXS
 
 =back
 
