@@ -21,6 +21,7 @@ Getopt::Long::GetOptions(
     "help"     => \$opt->{help},
     "man"      => \$opt->{man},
     "devel"    => \$opt->{devel},
+    "debug"    => \$opt->{debug},
 ) or Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 );
 
 Pod::Usage::pod2usage( -exitval => 0, -verbose => 1 ) if $opt->{help};
@@ -32,6 +33,11 @@ if ( $opt->{version} ) {
 }
 
 Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 ) unless ( $opt->{current} || $opt->{forecast} );
+
+require Data::Dumper if $opt->{debug};
+
+print "# [DEBUG] opt\n" .
+      Data::Dumper::Dumper( $opt ) . "\n" if $opt->{debug};
 
 my $home      = File::HomeDir->my_home;
 my $file      = '.weatherrc';
@@ -50,27 +56,63 @@ my $http_tiny = HTTP::Tiny->new();
 my $geolocation_api = 'http://ip-api.com/json';
 my $geo_res = $http_tiny->get( $geolocation_api );
 
+print "# [DEBUG] geo_res\n" .
+      Data::Dumper::Dumper( $geo_res ) . "\n" if $opt->{debug};
+
 my $location = {};
 
 if ( $geo_res->{success} ) {
     my $content = JSON::MaybeXS::decode_json( $geo_res->{content} );
 
+    print "# [DEBUG] geo_res content\n" .
+        Data::Dumper::Dumper( $content ) . "\n" if $opt->{debug};
+
+
     # TODO: this should be a little cleaner
     # to request only the fields we want
-    $location->{zip}      = $content->{zip};
-    $location->{city}     = $content->{city};
-    $location->{state}    = $content->{regionName};
-    $location->{country}  = $content->{country};
-    $location->{timezone} = $content->{timezone};
-    $location->{lon}      = $content->{lon};
-    $location->{lat}      = $content->{lat};
+    $location->{zip}          = $content->{zip};
+    $location->{city}         = $content->{city};
+    $location->{region}       = $content->{regionName};
+    $location->{country}      = $content->{country};
+    $location->{country_code} = lc $content->{countryCode};
+    $location->{timezone}     = $content->{timezone};
+    $location->{lon}          = $content->{lon};
+    $location->{lat}          = $content->{lat};
 }
 else {
     die( "the query to $geolocation_api wasn't successful\n" );
 }
 
-my $current_conditions_api = "https://api.openweathermap.org/data/2.5/weather?zip=$location->{zip},$location->{country}&appid=$config->{openweathermap}->{$tier}";
+my $current_conditions_api = "https://api.openweathermap.org/data/2.5/weather?zip=$location->{zip},$location->{country_code}&appid=$config->{openweathermap}->{$tier}";
 my $current_res = $http_tiny->get( $current_conditions_api );
+
+print "# [DEBUG] current_res\n" . 
+      Data::Dumper::Dumper( $current_res ) . "\n" if $opt->{debug};
+
+my $current_conditions = {};
+
+if ( $current_res->{success} ) {
+    $current_conditions = JSON::MaybeXS::decode_json( $current_res->{content} );
+}
+else {
+    die( "the query to $current_conditions_api wasn't successful\n" );
+}
+
+print "# [DEBUG] current_conditions\n" .
+      Data::Dumper::Dumper( $current_conditions ) . "\n" if $opt->{debug};
+
+# TODO: convert measurements to locality
+print "\nweather for $location->{city}, $location->{region}\n\n" .
+      "currently:\t$current_conditions->{weather}->[0]->{main}\n" .
+      "temp:\t\t$current_conditions->{main}->{temp}\n" .
+      "humidity:\t$current_conditions->{main}->{humidity}\n" .
+      "pressure:\t$current_conditions->{main}->{pressure}\n" . 
+      "precip:\t\t[TODO]\n" .
+      "wind:\t\t$current_conditions->{wind}->{speed}\n" .
+      "clouds:\t\t$current_conditions->{clouds}->{all}\n" . 
+      "visibility:\t$current_conditions->{visibility}\n" .
+      "\n"
+    if $opt->{current};
 
 __END__
 
@@ -85,7 +127,7 @@ weather - cli program to get the weather for your location
   weather [--current] [--forecast]
           [--version]
           [--help] [--man]
-          [--devel]
+          [--devel] [--debug]
 
 =head1 DESCRIPTION
 
@@ -99,6 +141,7 @@ This program will retrieve weather condition and forecast details for your locat
   --help        print this dialogue
   --man         display the full documentation
   --devel       use a development tier key for openweathermap
+  --debug       dump the internals and query responses
 
 =head1 EXAMPLES
 
@@ -148,6 +191,8 @@ The production section is required in normal operation.
 =item HTTP::Tiny
 
 =item JSON::MaybeXS
+
+=item Data::Dumper
 
 =back
 
