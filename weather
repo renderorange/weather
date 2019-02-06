@@ -48,12 +48,12 @@ die( "the $tier key for openweathermap is not present in $file_path\n" )
 my $http_tiny = HTTP::Tiny->new();
 
 my $geolocation_api = 'http://ip-api.com/json';
-my $res = $http_tiny->get( $geolocation_api );
+my $geo_res = $http_tiny->get( $geolocation_api );
 
 my $location = {};
 
-if ( $res->{success} ) {
-    my $content = JSON::MaybeXS::decode_json( $res->{content} );
+if ( $geo_res->{success} ) {
+    my $content = JSON::MaybeXS::decode_json( $geo_res->{content} );
 
     # TODO: this should be a little cleaner
     # to request only the fields we want
@@ -68,6 +68,9 @@ if ( $res->{success} ) {
 else {
     die( "the query to $geolocation_api wasn't successful\n" );
 }
+
+my $current_conditions_api = "https://api.openweathermap.org/data/2.5/weather?zip=$location->{zip},$location->{country}&appid=$config->{openweathermap}->{$tier}";
+my $current_res = $http_tiny->get( $current_conditions_api );
 
 __END__
 
@@ -91,7 +94,7 @@ This program will retrieve weather condition and forecast details for your locat
 =head1 OPTIONS
 
   --current     print the current conditions
-  --forecast    print the next 4 day forecast
+  --forecast    print the next 5 day forecast
   --version     print the version and exit
   --help        print this dialogue
   --man         display the full documentation
@@ -105,7 +108,7 @@ This program will retrieve weather condition and forecast details for your locat
 
   weather --current
 
-=item get the current conditions and 4 day forecast
+=item get the current conditions and 5 day forecast
 
   weather --current --forecast
 
