@@ -12,7 +12,9 @@ use JSON::MaybeXS ();
 
 my $VERSION = '2.00';
 
-my $opt = {};
+my $opt = {
+    units => 'imperial',
+};
 
 Getopt::Long::GetOptions(
     "current"  => \$opt->{current},
@@ -67,7 +69,6 @@ if ( $geo_res->{success} ) {
     print "# [DEBUG] geo_res content\n" .
         Data::Dumper::Dumper( $content ) . "\n" if $opt->{debug};
 
-
     # TODO: this should be a little cleaner
     # to request only the fields we want
     $location->{zip}          = $content->{zip};
@@ -83,7 +84,7 @@ else {
     die( "the query to $geolocation_api wasn't successful\n" );
 }
 
-my $current_conditions_api = "https://api.openweathermap.org/data/2.5/weather?zip=$location->{zip},$location->{country_code}&appid=$config->{openweathermap}->{$tier}";
+my $current_conditions_api = "https://api.openweathermap.org/data/2.5/weather?zip=$location->{zip},$location->{country_code}&appid=$config->{openweathermap}->{$tier}&units=$opt->{units}";
 my $current_res = $http_tiny->get( $current_conditions_api );
 
 print "# [DEBUG] current_res\n" . 
@@ -104,13 +105,13 @@ print "# [DEBUG] current_conditions\n" .
 # TODO: convert measurements to locality
 print "\nweather for $location->{city}, $location->{region}\n\n" .
       "currently:\t$current_conditions->{weather}->[0]->{main}\n" .
-      "temp:\t\t$current_conditions->{main}->{temp}\n" .
-      "humidity:\t$current_conditions->{main}->{humidity}\n" .
-      "pressure:\t$current_conditions->{main}->{pressure}\n" . 
-      "precip:\t\t[TODO]\n" .
-      "wind:\t\t$current_conditions->{wind}->{speed}\n" .
-      "clouds:\t\t$current_conditions->{clouds}->{all}\n" . 
-      "visibility:\t$current_conditions->{visibility}\n" .
+      "temp:\t\t$current_conditions->{main}->{temp} F\n" .
+      "humidity:\t$current_conditions->{main}->{humidity} %\n" .
+      "pressure:\t$current_conditions->{main}->{pressure} hpa\n" . 
+      #"precip:\t\t[TODO]\n" .
+      "wind:\t\t$current_conditions->{wind}->{speed} mph\n" .
+      "clouds:\t\t$current_conditions->{clouds}->{all} %\n" . 
+      "visibility:\t$current_conditions->{visibility} ft\n" .
       "\n"
     if $opt->{current};
 
