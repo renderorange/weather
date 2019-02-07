@@ -153,7 +153,7 @@ This program will retrieve weather condition and forecast details for your locat
 
 The configuration file for weather is located in the homedir of the running user, named .weatherrc
 
-The file may contain two sections, production and development, under the parent section, openweathermap
+The file may contain two sections, production and development, under the parent section, openweathermap.
 
   ~ $ cat .weatherrc
   [openweathermap]
@@ -187,5 +187,11 @@ The production section is required in normal operation.
 =head1 AUTHOR
 
 Blaine Motsinger, <blaine@renderorange.com>
+
+=head1 LICENSE AND COPYRIGHT
+
+This software is available under the MIT license.
+
+Copyright (c) 2019 Blaine Motsinger
 
 =cut
