@@ -18,7 +18,6 @@ my $opt = {
 
 Getopt::Long::GetOptions(
     "current"  => \$opt->{current},
-    "forecast" => \$opt->{forecast},
     "version"  => \$opt->{version},
     "help"     => \$opt->{help},
     "man"      => \$opt->{man},
@@ -34,7 +33,7 @@ if ( $opt->{version} ) {
     exit 0;
 }
 
-Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 ) unless ( $opt->{current} || $opt->{forecast} );
+Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 ) unless ( $opt->{current} );
 
 require Data::Dumper if $opt->{debug};
 
@@ -102,16 +101,13 @@ else {
 print "# [DEBUG] current_conditions\n" .
       Data::Dumper::Dumper( $current_conditions ) . "\n" if $opt->{debug};
 
-# TODO: convert measurements to locality
 print "\nweather for $location->{city}, $location->{region}\n\n" .
-      "currently:\t$current_conditions->{weather}->[0]->{main}\n" .
+      "currently:\t$current_conditions->{weather}->[0]->{description}\n" .
       "temp:\t\t$current_conditions->{main}->{temp} F\n" .
       "humidity:\t$current_conditions->{main}->{humidity} %\n" .
       "pressure:\t$current_conditions->{main}->{pressure} hpa\n" . 
-      #"precip:\t\t[TODO]\n" .
       "wind:\t\t$current_conditions->{wind}->{speed} mph\n" .
       "clouds:\t\t$current_conditions->{clouds}->{all} %\n" . 
-      "visibility:\t$current_conditions->{visibility} ft\n" .
       "\n"
     if $opt->{current};
 
@@ -125,7 +121,7 @@ weather - cli program to get the weather for your location
 
 =head1 SYNOPSIS
 
-  weather [--current] [--forecast]
+  weather [--current]
           [--version]
           [--help] [--man]
           [--devel] [--debug]
@@ -137,7 +133,6 @@ This program will retrieve weather condition and forecast details for your locat
 =head1 OPTIONS
 
   --current     print the current conditions
-  --forecast    print the next 5 day forecast
   --version     print the version and exit
   --help        print this dialogue
   --man         display the full documentation
@@ -151,14 +146,6 @@ This program will retrieve weather condition and forecast details for your locat
 =item get the current conditions
 
   weather --current
-
-=item get the current conditions and 5 day forecast
-
-  weather --current --forecast
-
-=item get the 4 day forecast only
-
-  weather --forecast
 
 =back
 
