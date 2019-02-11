@@ -5,12 +5,11 @@ use warnings;
 
 use Getopt::Long  ();
 use Pod::Usage    ();
-use File::HomeDir ();
 use Config::Tiny  ();
 use HTTP::Tiny    ();
 use JSON::MaybeXS ();
 
-my $VERSION = '2.00';
+my $VERSION = '2.01';
 
 my $opt = {
     units => 'imperial',
@@ -40,7 +39,7 @@ require Data::Dumper if $opt->{debug};
 print "# [DEBUG] opt\n" .
       Data::Dumper::Dumper( $opt ) . "\n" if $opt->{debug};
 
-my $home      = File::HomeDir->my_home;
+my $home      = $ENV{HOME};
 my $file      = '.weatherrc';
 my $file_path = "$home/$file";
 
@@ -171,8 +170,6 @@ The production section is required in normal operation.
 =item Getopt::Long
 
 =item Pod::Usage
-
-=item File::HomeDir
 
 =item Config::Tiny
 

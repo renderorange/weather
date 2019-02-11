@@ -55,7 +55,6 @@ The production section is required in normal operation.
 
 - Getopt::Long
 - Pod::Usage
-- File::HomeDir
 - Config::Tiny
 - HTTP::Tiny
 - JSON::MaybeXS
@@ -70,4 +69,3 @@ Blaine Motsinger, <blaine@renderorange.com>
 This software is available under the MIT license.
 
 Copyright (c) 2019 Blaine Motsinger
-
