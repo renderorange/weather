@@ -8,6 +8,7 @@ use Pod::Usage    ();
 use Config::Tiny  ();
 use HTTP::Tiny    ();
 use JSON::MaybeXS ();
+use Time::Piece   ();
 
 my $VERSION = '2.02';
 
@@ -138,7 +139,10 @@ if ( $opt->{forecast} ) {
           Data::Dumper::Dumper( $forecast ) . "\n" .
           "# [DEBUG] forecast output\n" if $opt->{debug};
 
-    print "5 day forecast:\tTODO\n" .
+    print "5 day forecast:\n" .
+
+          
+
           "\n";
 }
 
@@ -216,6 +220,8 @@ The production section is required in normal operation.
 =item JSON::MaybeXS
 
 =item Data::Dumper
+
+=item Time::Piece
 
 =back
 
