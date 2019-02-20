@@ -119,7 +119,7 @@ if ( $opt->{current} ) {
 }
 
 if ( $opt->{forecast} ) {
-    my $forecast_api = "$base_url/weather?$query_params";
+    my $forecast_api = "$base_url/forecast?$query_params";
     my $forecast_res = $http_tiny->get( $forecast_api );
     
     print "# [DEBUG] forecast_res\n" . 
