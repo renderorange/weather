@@ -9,7 +9,7 @@ use Config::Tiny  ();
 use HTTP::Tiny    ();
 use JSON::MaybeXS ();
 
-my $VERSION = '2.01';
+my $VERSION = '2.02';
 
 my $opt = {
     units => 'imperial',
@@ -17,6 +17,7 @@ my $opt = {
 
 Getopt::Long::GetOptions(
     "current"  => \$opt->{current},
+    "forecast" => \$opt->{forecast},
     "version"  => \$opt->{version},
     "help"     => \$opt->{help},
     "man"      => \$opt->{man},
@@ -32,7 +33,7 @@ if ( $opt->{version} ) {
     exit 0;
 }
 
-Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 ) unless ( $opt->{current} );
+Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 ) unless ( $opt->{current} || $opt->{forecast} );
 
 require Data::Dumper if $opt->{debug};
 
@@ -82,33 +83,64 @@ else {
     die( "the query to $geolocation_api wasn't successful\n" );
 }
 
-my $current_conditions_api = "https://api.openweathermap.org/data/2.5/weather?zip=$location->{zip},$location->{country_code}&appid=$config->{openweathermap}->{$tier}&units=$opt->{units}";
-my $current_res = $http_tiny->get( $current_conditions_api );
+my $base_url = 'https://api.openweathermap.org/data/2.5';
+my $query_params = "zip=$location->{zip},$location->{country_code}&appid=$config->{openweathermap}->{$tier}&units=$opt->{units}";
 
-print "# [DEBUG] current_res\n" . 
-      Data::Dumper::Dumper( $current_res ) . "\n" if $opt->{debug};
+print "# [DEBUG] header output\n" if $opt->{debug};
+print "\nweather for $location->{city}, $location->{region}\n\n";
 
-my $current_conditions = {};
+if ( $opt->{current} ) {
+    my $current_conditions_api = "$base_url/weather?$query_params";
+    my $current_res = $http_tiny->get( $current_conditions_api );
 
-if ( $current_res->{success} ) {
-    $current_conditions = JSON::MaybeXS::decode_json( $current_res->{content} );
+    print "# [DEBUG] current_res\n" . 
+          Data::Dumper::Dumper( $current_res ) . "\n" if $opt->{debug};
+
+    my $current_conditions = {};
+
+    if ( $current_res->{success} ) {
+        $current_conditions = JSON::MaybeXS::decode_json( $current_res->{content} );
+    }
+    else {
+        die( "the query to $current_conditions_api wasn't successful\n" );
+    }
+
+    print "# [DEBUG] current_conditions\n" .
+          Data::Dumper::Dumper( $current_conditions ) . "\n" .
+          "# [DEBUG] current output\n" if $opt->{debug};
+
+    print "currently:\t$current_conditions->{weather}->[0]->{description}\n" .
+          "temp:\t\t$current_conditions->{main}->{temp} F\n" .
+          "humidity:\t$current_conditions->{main}->{humidity} %\n" .
+          "pressure:\t$current_conditions->{main}->{pressure} hpa\n" . 
+          "wind:\t\t$current_conditions->{wind}->{speed} mph\n" .
+          "clouds:\t\t$current_conditions->{clouds}->{all} %\n" . 
+          "\n";
 }
-else {
-    die( "the query to $current_conditions_api wasn't successful\n" );
+
+if ( $opt->{forecast} ) {
+    my $forecast_api = "$base_url/weather?$query_params";
+    my $forecast_res = $http_tiny->get( $forecast_api );
+    
+    print "# [DEBUG] forecast_res\n" . 
+          Data::Dumper::Dumper( $forecast_res ) . "\n" if $opt->{debug};
+    
+    my $forecast = {};
+    
+    if ( $forecast_res->{success} ) {
+        $forecast = JSON::MaybeXS::decode_json( $forecast_res->{content} );
+    }
+    else {
+        die( "the query to $forecast_api wasn't successful\n" );
+    }
+
+    print "# [DEBUG] forecast\n" .
+          Data::Dumper::Dumper( $forecast ) . "\n" .
+          "# [DEBUG] forecast output\n" if $opt->{debug};
+
+    print "5 day forecast:\tTODO\n" .
+          "\n";
 }
-
-print "# [DEBUG] current_conditions\n" .
-      Data::Dumper::Dumper( $current_conditions ) . "\n" if $opt->{debug};
-
-print "\nweather for $location->{city}, $location->{region}\n\n" .
-      "currently:\t$current_conditions->{weather}->[0]->{description}\n" .
-      "temp:\t\t$current_conditions->{main}->{temp} F\n" .
-      "humidity:\t$current_conditions->{main}->{humidity} %\n" .
-      "pressure:\t$current_conditions->{main}->{pressure} hpa\n" . 
-      "wind:\t\t$current_conditions->{wind}->{speed} mph\n" .
-      "clouds:\t\t$current_conditions->{clouds}->{all} %\n" . 
-      "\n"
-    if $opt->{current};
 
 __END__
 
@@ -121,6 +153,7 @@ weather - cli program to get the weather for your location
 =head1 SYNOPSIS
 
   weather [--current]
+          [--forecast]
           [--version]
           [--help] [--man]
           [--devel] [--debug]
@@ -132,6 +165,7 @@ This program will retrieve weather condition and forecast details for your locat
 =head1 OPTIONS
 
   --current     print the current conditions
+  --forecast    print the 5 day forecast
   --version     print the version and exit
   --help        print this dialogue
   --man         display the full documentation
@@ -145,6 +179,10 @@ This program will retrieve weather condition and forecast details for your locat
 =item get the current conditions
 
   weather --current
+
+=item get the current conditions and 5 day forecast
+
+  weather --current --forecast
 
 =back
 
