@@ -90,31 +90,31 @@ print "# [DEBUG] header output\n" if $opt->{debug};
 print "\nweather for $location->{city}, $location->{region}\n\n";
 
 if ( $opt->{current} ) {
-    my $current_conditions_api = "$base_url/weather?$query_params";
-    my $current_res = $http_tiny->get( $current_conditions_api );
+    my $current_api = "$base_url/weather?$query_params";
+    my $current_res = $http_tiny->get( $current_api );
 
     print "# [DEBUG] current_res\n" . 
           Data::Dumper::Dumper( $current_res ) . "\n" if $opt->{debug};
 
-    my $current_conditions = {};
+    my $current = {};
 
     if ( $current_res->{success} ) {
-        $current_conditions = JSON::MaybeXS::decode_json( $current_res->{content} );
+        $current = JSON::MaybeXS::decode_json( $current_res->{content} );
     }
     else {
-        die( "the query to $current_conditions_api wasn't successful\n" );
+        die( "the query to $current_api wasn't successful\n" );
     }
 
     print "# [DEBUG] current_conditions\n" .
-          Data::Dumper::Dumper( $current_conditions ) . "\n" .
+          Data::Dumper::Dumper( $current ) . "\n" .
           "# [DEBUG] current output\n" if $opt->{debug};
 
-    print "currently:\t$current_conditions->{weather}->[0]->{description}\n" .
-          "temp:\t\t$current_conditions->{main}->{temp} F\n" .
-          "humidity:\t$current_conditions->{main}->{humidity} %\n" .
-          "pressure:\t$current_conditions->{main}->{pressure} hpa\n" . 
-          "wind:\t\t$current_conditions->{wind}->{speed} mph\n" .
-          "clouds:\t\t$current_conditions->{clouds}->{all} %\n" . 
+    print "currently:\t$current->{weather}->[0]->{description}\n" .
+          "temp:\t\t$current->{main}->{temp} F\n" .
+          "humidity:\t$current->{main}->{humidity} %\n" .
+          "pressure:\t$current->{main}->{pressure} hpa\n" . 
+          "wind:\t\t$current->{wind}->{speed} mph\n" .
+          "clouds:\t\t$current->{clouds}->{all} %\n" . 
           "\n";
 }
 
