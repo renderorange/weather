@@ -19,6 +19,7 @@ This program will retrieve weather condition and forecast details for your locat
 
 ```
 --current     print the current conditions
+--forecast    print the 5 day forecast
 --version     print the version and exit
 --help        print this dialogue
 --man         display the full documentation
@@ -32,6 +33,12 @@ This program will retrieve weather condition and forecast details for your locat
 
 ```
 weather --current
+```
+
+### get the current conditions and 5 day forecast
+
+```
+weather --current --forecast
 ```
 
 ## CONFIGURATION
@@ -59,6 +66,7 @@ The production section is required in normal operation.
 - HTTP::Tiny
 - JSON::MaybeXS
 - Data::Dumper
+- Time::Piece
 
 ## AUTHOR
 
