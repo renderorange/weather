@@ -8,7 +8,7 @@ use Pod::Usage    ();
 use Config::Tiny  ();
 use HTTP::Tiny    ();
 use JSON::MaybeXS ();
-use Time::Piece   ();
+use Time::Piece;
 
 my $VERSION = '2.02';
 
@@ -88,7 +88,7 @@ my $base_url = 'https://api.openweathermap.org/data/2.5';
 my $query_params = "zip=$location->{zip},$location->{country_code}&appid=$config->{openweathermap}->{$tier}&units=$opt->{units}";
 
 print "# [DEBUG] header output\n" if $opt->{debug};
-print "\nweather for $location->{city}, $location->{region}\n\n";
+print "\n### weather for $location->{city}, $location->{region}\n\n";
 
 if ( $opt->{current} ) {
     my $current_api = "$base_url/weather?$query_params";
@@ -110,7 +110,11 @@ if ( $opt->{current} ) {
           Data::Dumper::Dumper( $current ) . "\n" .
           "# [DEBUG] current output\n" if $opt->{debug};
 
-    print "currently:\t$current->{weather}->[0]->{description}\n" .
+    print "### currently\n\n";
+
+    print "# " . localtime->ymd . "\n\n";
+
+    print "overall:\t$current->{weather}->[0]->{description}\n" .
           "temp:\t\t$current->{main}->{temp} F\n" .
           "humidity:\t$current->{main}->{humidity} %\n" .
           "pressure:\t$current->{main}->{pressure} hpa\n" . 
@@ -139,11 +143,27 @@ if ( $opt->{forecast} ) {
           Data::Dumper::Dumper( $forecast ) . "\n" .
           "# [DEBUG] forecast output\n" if $opt->{debug};
 
-    print "5 day forecast:\n" .
+    print "### 5 day forecast\n\n";
 
-          
+    foreach my $forecast_period ( @{ $forecast->{list} } ) {
 
-          "\n";
+        # instead of doing date time comparisons
+        # we're just checking the timestamp for 12am to filter
+        # for only the whole day entries
+        next unless $forecast_period->{dt_txt} =~ /00:00:00$/;
+
+        my ( $day ) = split( / /, $forecast_period->{dt_txt} );
+
+        print "# $day\n\n";
+
+        print "overall:\t$forecast_period->{weather}->[0]->{description}\n" .
+              "temp:\t\t$forecast_period->{main}->{temp} F\n" .
+              "humidity:\t$forecast_period->{main}->{humidity} %\n" .
+              "pressure:\t$forecast_period->{main}->{pressure} hpa\n" .
+              "wind:\t\t$forecast_period->{wind}->{speed} mph\n" .
+              "clouds:\t\t$forecast_period->{clouds}->{all} %\n" .
+              "\n";
+    }
 }
 
 __END__
