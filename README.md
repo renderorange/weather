@@ -6,6 +6,7 @@ cli program to get the weather for your location
 
 ```
 weather [--current]
+        [--forecast]
         [--version]
         [--help] [--man]
         [--devel] [--debug]
