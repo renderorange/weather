@@ -110,11 +110,11 @@ if ( $opt->{current} ) {
           Data::Dumper::Dumper( $current ) . "\n" .
           "# [DEBUG] current output\n" if $opt->{debug};
 
-    print "### currently\n\n";
-
-    print "# " . localtime->ymd . "\n\n";
-
-    print "overall:\t$current->{weather}->[0]->{description}\n" .
+    print "## currently\n" .
+          "\n" .
+          "# " . localtime->ymd . " (today)\n" .
+          "\n" .
+          "overall:\t$current->{weather}->[0]->{description}\n" .
           "temp:\t\t$current->{main}->{temp} F\n" .
           "humidity:\t$current->{main}->{humidity} %\n" .
           "pressure:\t$current->{main}->{pressure} hpa\n" . 
@@ -143,7 +143,7 @@ if ( $opt->{forecast} ) {
           Data::Dumper::Dumper( $forecast ) . "\n" .
           "# [DEBUG] forecast output\n" if $opt->{debug};
 
-    print "### 5 day forecast\n\n";
+    print "## 5 day forecast\n\n";
 
     foreach my $forecast_period ( @{ $forecast->{list} } ) {
 
@@ -152,11 +152,9 @@ if ( $opt->{forecast} ) {
         # for only the whole day entries
         next unless $forecast_period->{dt_txt} =~ /00:00:00$/;
 
-        my ( $day ) = split( / /, $forecast_period->{dt_txt} );
-
-        print "# $day\n\n";
-
-        print "overall:\t$forecast_period->{weather}->[0]->{description}\n" .
+        print "# " . ( split( / /, $forecast_period->{dt_txt} ) )[0] . "\n" .
+              "\n" .
+              "overall:\t$forecast_period->{weather}->[0]->{description}\n" .
               "temp:\t\t$forecast_period->{main}->{temp} F\n" .
               "humidity:\t$forecast_period->{main}->{humidity} %\n" .
               "pressure:\t$forecast_period->{main}->{pressure} hpa\n" .
